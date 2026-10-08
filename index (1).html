@@ -1,0 +1,30 @@
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Connexion · Mapping Chartreuse</title><link rel="stylesheet" href="style.css">
+<style>
+.w{min-height:100vh;display:grid;place-items:center;padding:20px}
+.box{width:100%;max-width:340px;background:#16162acc;border:1px solid var(--bd);border-radius:24px;padding:28px 24px;text-align:center;backdrop-filter:blur(10px)}
+.box h1{font-size:1.5rem}.box p{color:var(--mu);font-size:.9rem;margin:6px 0 18px}
+input{width:100%;padding:13px 14px;border-radius:12px;border:1px solid var(--bd);background:#0d0d1c;color:var(--tx);font-size:1rem;text-align:center;outline:none}
+input:focus{border-color:var(--c1)}
+.dots{display:flex;justify-content:center;gap:12px;margin:20px 0}
+.dots i{width:14px;height:14px;border-radius:50%;border:2px solid var(--bd);transition:.15s}
+.dots i.f{background:linear-gradient(135deg,var(--c1),var(--c2));border-color:transparent;transform:scale(1.15)}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.pad button{aspect-ratio:1.4;border-radius:16px;border:1px solid var(--bd);background:#1d1d36;color:var(--tx);font-size:1.5rem;cursor:pointer;transition:.1s}
+.pad button:active{transform:scale(.93);background:#2b2b52}
+.pad .s{font-size:1.1rem;color:var(--mu)}
+.err{color:var(--er);min-height:20px;font-size:.9rem;margin-top:14px}
+.shake{animation:sh .4s}@keyframes sh{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+</style></head><body><div class="w"><div class="box" id="b">
+<h1 class="grad">Mapping Chartreuse</h1><p>Identifiant + code PIN à 6 chiffres</p>
+<input id="u" placeholder="Identifiant" autocomplete="username" autocapitalize="off">
+<div class="dots" id="d"></div><div class="pad" id="p"></div><div class="err" id="e"></div></div></div>
+<script src="auth.js"></script><script>
+if(sessionStorage.getItem("user"))location.replace("accueil.html");
+let pin="";const d=document.getElementById("d"),p=document.getElementById("p"),e=document.getElementById("e"),b=document.getElementById("b");
+d.innerHTML="<i></i>".repeat(6);
+["1","2","3","4","5","6","7","8","9","C","0","⌫"].forEach(k=>{const x=document.createElement("button");x.textContent=k;if(k=="C"||k=="⌫")x.className="s";x.onclick=()=>press(k);p.append(x)});
+function draw(){[...d.children].forEach((i,n)=>i.className=n<pin.length?"f":"")}
+function press(k){e.textContent="";if(k=="C")pin="";else if(k=="⌫")pin=pin.slice(0,-1);else if(pin.length<6)pin+=k;draw();if(pin.length==6)setTimeout(go,150)}
+function go(){if(login(document.getElementById("u").value,pin))location.href="accueil.html";else{e.textContent="Identifiant ou PIN incorrect";b.classList.remove("shake");void b.offsetWidth;b.classList.add("shake");pin="";draw()}}
+document.addEventListener("keydown",ev=>{if(document.activeElement.id=="u")return;if(/^\d$/.test(ev.key))press(ev.key);else if(ev.key=="Backspace")press("⌫")});
+</script></body></html>
